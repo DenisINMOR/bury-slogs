@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bury Slogs - Словарь литературных находок</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Стартовый экран -->
+    <div id="welcome-screen" class="welcome-screen">
+        <div class="welcome-container">
+            <h1 class="welcome-title">Bury Slogs</h1>
+            <p class="welcome-subtitle">Словарь литературных находок</p>
+            <div class="welcome-form">
+                <div class="input-group">
+                    <label for="user-name">Ваше имя</label>
+                    <input type="text" id="user-name" placeholder="Введите ваше имя">
+                </div>
+                <div class="input-group">
+                    <label for="user-birthday">Дата рождения</label>
+                    <input type="date" id="user-birthday">
+                </div>
+                <button id="start-btn" class="primary-btn">Начать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Главное приложение -->
+    <div id="app" class="app hidden">
+        <!-- Верхняя панель -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="user-info">
+                    <span class="user-greeting">Привет, <span id="user-name-display"></span>!</span>
+                </div>
+                <div class="header-actions">
+                    <button id="theme-toggle" class="icon-btn" title="Сменить тему">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="5"/>
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                    </button>
+                    <button id="stats-btn" class="icon-btn" title="Статистика">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18 17V9"/>
+                            <path d="M13 17V5"/>
+                            <path d="M8 17v-3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Панель поиска и фильтров -->
+        <div class="search-panel">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Поиск по словам..." class="search-input">
+                </div>
+                <div class="filter-tags">
+                    <button class="filter-tag active" data-filter="all">Все</button>
+                    <button class="filter-tag" data-filter="alphabetical">А-Я</button>
+                    <button class="filter-tag" data-filter="nouns">Существительные</button>
+                    <button class="filter-tag" data-filter="verbs">Глаголы</button>
+                    <button class="filter-tag" data-filter="adjectives">Прилагательные</button>
+                    <button class="filter-tag" data-filter="favorites">⭐ Избранное</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список слов -->
+        <main class="main-content">
+            <div id="words-container" class="words-container">
+                <!-- Слова будут добавляться динамически -->
+            </div>
+        </main>
+
+        <!-- Плавающая кнопка добавления -->
+        <button id="add-word-fab" class="fab" title="Добавить слово">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+        </button>
+
+        <!-- Нижняя навигация -->
+        <nav class="bottom-nav">
+            <button id="favorites-tab" class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                </svg>
+                <span>Избранное</span>
+            </button>
+            <button id="export-tab" class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Экспорт</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Модальное окно добавления/редактирования слова -->
+    <div id="word-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Добавить слово</h2>
+                <button id="modal-close" class="icon-btn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="word-form">
+                    <div class="form-group">
+                        <label for="word-input">Слово</label>
+                        <input type="text" id="word-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="definition-input">Определение</label>
+                        <textarea id="definition-input" rows="4" placeholder="Введите определение или описание слова"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="part-of-speech-input">Часть речи</label>
+                        <select id="part-of-speech-input">
+                            <option value="">Выберите часть речи</option>
+                            <option value="существительное">Существительное</option>
+                            <option value="глагол">Глагол</option>
+                            <option value="прилагательное">Прилагательное</option>
+                            <option value="наречие">Наречие</option>
+                            <option value="предлог">Предлог</option>
+                            <option value="союз">Союз</option>
+                            <option value="междометие">Междометие</option>
+                            <option value="фраза">Фраза</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="source-input">Источник</label>
+                        <input type="text" id="source-input" placeholder="Откуда слово (книга, автор)">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancel-btn" class="secondary-btn">Отмена</button>
+                        <button type="submit" class="primary-btn">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно просмотра слова -->
+    <div id="view-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="view-word-title"></h2>
+                <button id="view-modal-close" class="icon-btn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="word-details">
+                    <div class="word-meta">
+                        <span id="view-part-of-speech" class="part-of-speech"></span>
+                        <span id="view-source" class="source"></span>
+                    </div>
+                    <div class="word-definition" id="view-definition"></div>
+                    <div class="word-actions">
+                        <button id="edit-word-btn" class="secondary-btn">Редактировать</button>
+                        <button id="delete-word-btn" class="danger-btn">Удалить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно статистики -->
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Статистика</h2>
+                <button id="stats-close" class="icon-btn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-words">0</div>
+                        <div class="stat-label">Всего слов</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="words-with-definitions">0</div>
+                        <div class="stat-label">С определениями</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="favorite-words">0</div>
+                        <div class="stat-label">В избранном</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="recent-additions">0</div>
+                        <div class="stat-label">За неделю</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
